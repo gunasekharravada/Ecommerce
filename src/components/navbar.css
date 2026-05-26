@@ -1,0 +1,216 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  height: 75px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 5%;
+  transition: 0.3s ease;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.navbar.sticky {
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid #dcdcdc;
+}
+
+.logo img {
+  width: 150px;
+  object-fit: contain;
+}
+
+/* Center Menu */
+
+.nav-links {
+  display: flex;
+  list-style: none;
+  gap: 35px;
+  align-items: center;
+}
+
+.nav-links li {
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  position: relative;
+  transition: 0.3s;
+}
+
+.nav-links li:hover {
+  color: #ff6600;
+}
+
+/* Dropdown */
+
+.shop-menu {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dropdown {
+  position: absolute;
+  top: 35px;
+  left: 0;
+  width: 180px;
+  background: white;
+  list-style: none;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+}
+
+.dropdown li {
+  padding: 12px 15px;
+}
+
+.dropdown li:hover {
+  background: #f5f5f5;
+}
+
+/* Icons */
+
+.nav-icons {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.icon {
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+}
+
+.search-input {
+  width: 220px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 30px;
+  margin-right: 10px;
+  animation: slideSearch 0.3s ease;
+}
+
+@keyframes slideSearch {
+  from {
+    width: 0;
+    opacity: 0;
+  }
+  to {
+    width: 220px;
+    opacity: 1;
+  }
+}
+
+/* Cart */
+
+.cart-container {
+  position: relative;
+}
+
+.cart-badge {
+  position: absolute;
+  top: -8px;
+  right: -10px;
+  background: red;
+  color: white;
+  font-size: 11px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Hamburger */
+
+.hamburger {
+  display: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+/* Mobile Menu */
+
+.mobile-menu {
+  position: absolute;
+  top: 75px;
+  left: 0;
+  width: 100%;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  max-height: 0;
+  overflow: hidden;
+  transition: 0.4s ease;
+}
+
+.mobile-menu.active {
+  max-height: 500px;
+  padding: 20px;
+}
+
+.mobile-menu a,
+.mobile-shop p {
+  text-decoration: none;
+  color: #333;
+  padding: 10px 0;
+  font-weight: 600;
+}
+
+.mobile-shop {
+  display: flex;
+  flex-direction: column;
+}
+
+.mobile-shop a {
+  padding-left: 15px;
+  color: #666;
+}
+
+/* Tablet */
+
+@media (max-width: 992px) {
+  .nav-links {
+    gap: 20px;
+  }
+
+  .search-input {
+    width: 170px;
+  }
+}
+
+/* Mobile */
+
+@media (max-width: 768px) {
+  .nav-links {
+    display: none;
+  }
+
+  .nav-icons .icon,
+  .search-container {
+    display: none;
+  }
+
+  .hamburger {
+    display: block;
+  }
+
+  .logo img {
+    width: 120px;
+  }
+}
