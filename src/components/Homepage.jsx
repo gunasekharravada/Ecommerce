@@ -4,7 +4,7 @@ import "./homepage.css";
 
 import fashionImg from "../images/fashion3.jpg";
 import mobileImg from "../images/mobile1.jpg";
-import electronicsImg from "../images/electronics2.jpg";
+import ElectronicsImg from "../images/Electronics2.jpg";
 import skincareImg from "../images/skincare1.jpg";
 import gamingImg from "../images/gaming.jpg";
 
@@ -24,7 +24,7 @@ const slides = [
   {
     title: "Upgrade Your Electronics",
     subtitle: "TRENDING GADGETS",
-    image: electronicsImg,
+    image: ElectronicsImg,
     path: "/electronics",
   },
   {
