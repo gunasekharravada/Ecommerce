@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState,useRef, useEffect } from "react";
 import {
   FaSearch,
   FaUser,
@@ -6,6 +6,14 @@ import {
   FaChevronDown,
   FaHome,
   FaStore,
+  FaTshirt,
+  FaLaptop,
+  FaMobile,
+  FaClock,
+  FaBook,
+  FaSprayCan,
+  FaPumpSoap,
+  FaCouch,
 } from "react-icons/fa";
 
 import "./navbar.css";
@@ -16,9 +24,24 @@ const Navbar = () => {
   const [shopDropdown, setShopDropdown] = useState(false);
   const [sticky, setSticky] = useState(false);
 
-  const cartCount = 3;
+  const cartCount = 3; // Replace with actual cart count logic
+
+  const shopDropdownRef = useRef(null); // Ref for shop dropdown
 
   useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        shopDropdownRef.current &&
+        !shopDropdownRef.current.contains(event.target)
+      ) {
+        setShopDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+   
     const handleScroll = () => {
       setSticky(window.scrollY > 20);
     };
@@ -34,25 +57,33 @@ const Navbar = () => {
       <nav className={`navbar ${sticky ? "sticky" : ""}`}>
         {/* Logo */}
         <div className="logo">
-          <img src={logo} alt="GoCart Logo" />
+          <a href="/">
+            <img src={logo} alt="GoCart Logo" />
+          </a>
         </div>
 
         {/* Center Menu */}
         <ul className="nav-links">
-          <li>Home</li>
+          <li><a href="/">Home</a></li>
 
           <li
             className="shop-menu"
-            onMouseEnter={() => setShopDropdown(true)}
-            onMouseLeave={() => setShopDropdown(false)}
+           onMouseEnter={() => setShopDropdown(true)}
+            ref={shopDropdownRef}
           >
             Shop <FaChevronDown className="dropdown-icon" />
 
             {shopDropdown && (
               <ul className="dropdown">
-                <li>Fashion</li>
-                <li>Electronics</li>
-                <li>Mobiles</li>
+
+                <a href="/"><li><FaTshirt /> Fashion</li></a>
+                <a href="/"><li><FaMobile /> Mobiles</li></a>
+                <a href="/"><li><FaLaptop /> Electronics</li></a>
+                <a href="/"><li><FaPumpSoap /> Skincare</li></a>
+                <a href="/"><li><FaShoppingBag /> Accessories </li></a>
+                <a href="/"><li><FaBook /> Books</li></a>
+                
+                <a href="/"><li><FaCouch /> Furniture</li></a>
               </ul>
             )}
           </li>
@@ -65,11 +96,7 @@ const Navbar = () => {
         <div className="nav-icons">
           <div className="search-container">
             {searchOpen && (
-              <input
-                type="text"
-                placeholder="Search products..."
-                className="search-input"
-              />
+              <input type="text" placeholder="Search products..." className="search-input"/>
             )}
 
             <FaSearch

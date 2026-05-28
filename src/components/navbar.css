@@ -36,7 +36,11 @@
   gap: 35px;
   align-items: center;
 }
-
+.nav-links a {
+  text-decoration: none;
+  color: #333;
+  scrollbehavior: smooth;
+}
 .nav-links li {
   cursor: pointer;
   font-size: 16px;
@@ -69,6 +73,10 @@
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
 }
 
+.dropdown a {
+  text-decoration: none;
+  color: #333;
+}
 .dropdown li {
   padding: 12px 15px;
 }
