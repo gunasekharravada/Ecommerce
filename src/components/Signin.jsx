@@ -25,24 +25,7 @@ import {
   signInWithPopup,
 } from "firebase/auth";
 
-import { GoogleLogin } from '@react-oauth/google';
 
-<GoogleLogin
-  onSuccess={credentialResponse => {
-    console.log(credentialResponse);
-  }}
-  onError={() => {
-    console.log('Login Failed');
-  }}
-/>;
-import FacebookLogin from 'react-facebook-login';
-
-<FacebookLogin
-  appId="2494538011018070"
-  autoLoad={false}
-  fields="name,email,picture"
-  callback={response => console.log(response)} 
-/>;
 
 function Signin() {
   const navigate = useNavigate();
