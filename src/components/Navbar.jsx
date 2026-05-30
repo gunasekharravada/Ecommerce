@@ -18,6 +18,8 @@ import {
 
 import "./navbar.css";
 import logo from "../images/logo.png";
+import {Link} from "react-router-dom";
+
 
 const Navbar = () => {
   const [searchOpen, setSearchOpen] = useState(false);
@@ -105,7 +107,7 @@ const Navbar = () => {
             />
           </div>
 
-          <FaUser className="icon" />
+          <Link to="/signin"><FaUser className="icon" /></Link>
 
           <div className="cart-container">
             <FaShoppingBag className="icon" />
@@ -141,10 +143,10 @@ const Navbar = () => {
           <span>Shop</span>
         </a>
 
-        <a href="/profile">
+         <Link to="/signin">
           <FaUser />
           <span>Profile</span>
-        </a>
+        </Link>
 
         <a href="/cart" className="mobile-cart">
           <FaShoppingBag />
