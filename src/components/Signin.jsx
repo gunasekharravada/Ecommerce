@@ -10,9 +10,10 @@ import {
   createUserWithEmailAndPassword,
 } from "firebase/auth";
 
+import { FcGoogle } from "react-icons/fc";
+import { FaFacebook } from "react-icons/fa";
+
 import {
-  FaGoogle,
-  FaFacebookF,
   FaEye,
   FaEyeSlash,
   FaEnvelope,
@@ -361,24 +362,23 @@ return isValid;
           <span>or</span>
         </div>
 
-        <div className="social-icons">
-
+   <div className="social-login-row">
   <button
-    className="social-btn"
+    className="social-login-btn"
     onClick={handleGoogleLogin}
   >
-    <FaGoogle />
+    <FcGoogle className="social-logo" />
+    <span>Google</span>
   </button>
 
   <button
-    className="social-btn"
+    className="social-login-btn"
     onClick={handleFacebookLogin}
   >
-    <FaFacebookF />
+    <FaFacebook className="social-logo facebook-icon" />
+    <span>Facebook</span>
   </button>
-
 </div>
-
         <p className="terms">
           By signing in with an account,
           you agree to our

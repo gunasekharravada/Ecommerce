@@ -22,6 +22,7 @@ import {Link} from "react-router-dom";
 
 
 const Navbar = () => {
+   const [showLoginTip, setShowLoginTip] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [shopDropdown, setShopDropdown] = useState(false);
   const [sticky, setSticky] = useState(false);
@@ -29,6 +30,24 @@ const Navbar = () => {
   const cartCount = 3; // Replace with actual cart count logic
 
   const shopDropdownRef = useRef(null); // Ref for shop dropdown
+
+  useEffect(() => {
+  const hasSeenTip = localStorage.getItem("hasSeenLoginTip");
+
+  let timer;
+
+  if (!hasSeenTip) {
+    setShowLoginTip(true);
+
+    localStorage.setItem("hasSeenLoginTip", "true");
+
+    timer = setTimeout(() => {
+      setShowLoginTip(false);
+    }, 3000);
+  }
+
+  return () => clearTimeout(timer);
+}, []);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -43,7 +62,7 @@ const Navbar = () => {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-   
+
     const handleScroll = () => {
       setSticky(window.scrollY > 20);
     };
@@ -107,7 +126,17 @@ const Navbar = () => {
             />
           </div>
 
-          <Link to="/signin"><FaUser className="icon" /></Link>
+          <div className="profile-wrapper">
+  <Link to="/signin">
+    <FaUser className="icon" />
+  </Link>
+
+  {showLoginTip && (
+    <div className="login-callout">
+      Please <span>Login</span> / <span>Sign Up</span> 
+    </div>
+  )}
+</div>
 
           <div className="cart-container">
             <FaShoppingBag className="icon" />
@@ -143,10 +172,18 @@ const Navbar = () => {
           <span>Shop</span>
         </a>
 
-         <Link to="/signin">
-          <FaUser />
-          <span>Profile</span>
-        </Link>
+        <div className="mobile-profile-wrapper">
+  <Link to="/signin">
+    <FaUser />
+    <span>Profile</span>
+  </Link>
+
+  {window.innerWidth <= 768 && showLoginTip && (
+  <div className="mobile-login-callout">
+    Login / Sign Up
+  </div>
+)}
+</div>
 
         <a href="/cart" className="mobile-cart">
           <FaShoppingBag />
