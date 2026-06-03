@@ -20,7 +20,6 @@ import "./navbar.css";
 import logo from "../images/logo.png";
 import {Link} from "react-router-dom";
 
-
 const Navbar = () => {
    const [showLoginTip, setShowLoginTip] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -162,7 +161,7 @@ const Navbar = () => {
 
       {/* Mobile Bottom Navigation */}
       <div className="mobile-bottom-nav">
-        <a href="/">
+        <a href="/home">
           <FaHome />
           <span>Home</span>
         </a>
@@ -171,19 +170,19 @@ const Navbar = () => {
           <FaStore />
           <span>Shop</span>
         </a>
+        
+    <Link to="/profile" className="mobile-profile-wrapper">
+  <FaUser />
+  <span>Profile</span>
 
-        <div className="mobile-profile-wrapper">
-  <Link to="/signin">
-    <FaUser />
-    <span>Profile</span>
-  </Link>
+
 
   {window.innerWidth <= 768 && showLoginTip && (
   <div className="mobile-login-callout">
     Login / Sign Up
   </div>
 )}
-</div>
+</Link>
 
         <a href="/cart" className="mobile-cart">
           <FaShoppingBag />

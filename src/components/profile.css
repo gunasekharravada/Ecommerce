@@ -1,0 +1,96 @@
+.profile-page{
+  min-height:100vh;
+  background:#f7f7f7;
+  padding:20px;
+}
+
+.profile-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.header-right{
+  display:flex;
+  gap:20px;
+}
+
+.header-icon{
+  font-size:22px;
+}
+
+.user-card{
+  margin-top:20px;
+  background:#fff;
+  border-radius:15px;
+  padding:20px;
+  display:flex;
+  align-items:center;
+  gap:15px;
+}
+
+.avatar{
+  width:70px;
+  height:70px;
+  border-radius:50%;
+  background:#ff6600;
+  color:#fff;
+  font-size:28px;
+  font-weight:bold;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.edit-btn{
+  display:block;
+  margin-top:15px;
+  text-align:center;
+  background:#ff6600;
+  color:white;
+  padding:12px;
+  border-radius:10px;
+  text-decoration:none;
+}
+
+.section{
+  background:#fff;
+  margin-top:20px;
+  border-radius:15px;
+  padding:20px;
+}
+
+.section-header{
+  display:flex;
+  justify-content:space-between;
+}
+
+.select-order-btn{
+  margin-top:15px;
+  width:100%;
+  height:45px;
+  border:none;
+  background:#ff6600;
+  color:white;
+  border-radius:8px;
+}
+
+.menu-item{
+  display:flex;
+  gap:12px;
+  padding:15px 0;
+  text-decoration:none;
+  color:#333;
+  border-bottom:1px solid #eee;
+}
+
+.logout-btn{
+  width:100%;
+  margin-top:25px;
+  height:50px;
+  border:2px solid #ff6600;
+  background:white;
+  color:#ff6600;
+  border-radius:10px;
+  font-weight:700;
+}

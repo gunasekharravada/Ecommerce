@@ -245,7 +245,7 @@ return isValid;
           {isSignup ? "Create Account" : "Sign in"}
         </h2>
 
-        <p className="subtitle">
+        <div className="subtitle">
           {isSignup ? (
             <>
               Already have an account?{" "}
@@ -276,7 +276,7 @@ return isValid;
     {successMessage}
   </div>
 )}
-        </p>
+        </div>
 
         {/* Email */}
 
