@@ -170,7 +170,6 @@ const Navbar = () => {
           <FaStore />
           <span>Shop</span>
         </a>
-        
     <Link to="/profile" className="mobile-profile-wrapper">
   <FaUser />
   <span>Profile</span>

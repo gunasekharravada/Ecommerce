@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+// 1. ADDED: Correct Firebase authentication imports
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 
 import {
   FaArrowLeft,
@@ -14,23 +16,38 @@ import {
 
 import "./profile.css";
 
+// 2. RENAMED: Changed from AuthListener to ProfilePage to accurately match its UI function
 const Profile = () => {
   const navigate = useNavigate();
+  const auth = getAuth(); // Note: Changed to lowercase 'auth' (standard practice)
 
-  const logout = () => {
-    localStorage.clear();
-    navigate("/signin");
+  useEffect(() => {
+    // 3. FIXED: Listens to Firebase auth changes. If user logs out, redirects immediately.
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        navigate("/signin");
+      }
+    });
+
+    return () => unsubscribe();
+  }, [navigate, auth]); // 4. FIXED: Added 'auth' to the dependency array
+
+  // 5. FIXED: Replaced manual localStorage removal with Firebase signOut
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      // The onAuthStateChanged listener above will automatically catch this 
+      // signout and redirect the user to "/signin"
+    } catch (error) {
+      console.error("Error signing out: ", error);
+    }
   };
 
   return (
     <div className="profile-page">
-
       {/* Header */}
       <div className="profile-header">
-        <FaArrowLeft
-          className="header-icon"
-          onClick={() => navigate("/")}
-        />
+        <FaArrowLeft className="header-icon" onClick={() => navigate("/")} />
 
         <div className="header-right">
           <Link to="/notifications">
@@ -45,16 +62,12 @@ const Profile = () => {
 
       {/* User Card */}
       <div className="user-card">
-
-        <div className="avatar">
-          R
-        </div>
+        <div className="avatar">R</div>
 
         <div>
           <h3>Rahul Sharma</h3>
           <p>+91 9876543210</p>
         </div>
-
       </div>
 
       <Link to="/edit-profile" className="edit-btn">
@@ -62,15 +75,10 @@ const Profile = () => {
       </Link>
 
       {/* Orders */}
-
       <div className="section">
-
         <div className="section-header">
           <h3>My Orders</h3>
-
-          <Link to="/orders">
-            View All
-          </Link>
+          <Link to="/orders">View All</Link>
         </div>
 
         <button
@@ -79,13 +87,10 @@ const Profile = () => {
         >
           Select Order
         </button>
-
       </div>
 
       {/* Account */}
-
       <div className="section">
-
         <h3>Account</h3>
 
         <Link to="/wishlist" className="menu-item">
@@ -112,16 +117,12 @@ const Profile = () => {
           <FaTag />
           Coupon & Offers
         </Link>
-
       </div>
 
-      <button
-        className="logout-btn"
-        onClick={logout}
-      >
+      {/* Logout Button */}
+      <button className="logout-btn" onClick={handleLogout}>
         Logout
       </button>
-
     </div>
   );
 };
