@@ -1,7 +1,8 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-// 1. ADDED: Correct Firebase authentication imports
+// 1. ADDED: doc and onSnapshot for live Firestore data fetching
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+import { getFirestore, doc, onSnapshot } from "firebase/firestore"; 
 
 import {
   FaArrowLeft,
@@ -16,32 +17,51 @@ import {
 
 import "./profile.css";
 
-// 2. RENAMED: Changed from AuthListener to ProfilePage to accurately match its UI function
 const Profile = () => {
   const navigate = useNavigate();
-  const auth = getAuth(); // Note: Changed to lowercase 'auth' (standard practice)
+  const auth = getAuth();
+  const db = getFirestore(); // Initialize Firestore instance
+
+  // STATE: Added to store the live database values
+  const [profileData, setProfileData] = useState({
+    fullName: "",
+    mobileNumber: ""
+  });
 
   useEffect(() => {
-    // 3. FIXED: Listens to Firebase auth changes. If user logs out, redirects immediately.
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    let unsubscribeFirestore;
+
+    const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
       if (!user) {
         navigate("/signin");
+      } else {
+        // FETCHING: Start listening to the logged-in user's document in the 'users' collection
+        const userRef = doc(db, "users", user.uid);
+        unsubscribeFirestore = onSnapshot(userRef, (docSnap) => {
+          if (docSnap.exists()) {
+            setProfileData(docSnap.data());
+          }
+        });
       }
     });
 
-    return () => unsubscribe();
-  }, [navigate, auth]); // 4. FIXED: Added 'auth' to the dependency array
+    // Cleanup both listeners on unmount
+    return () => {
+      unsubscribeAuth();
+      if (unsubscribeFirestore) unsubscribeFirestore();
+    };
+  }, [navigate, auth, db]);
 
-  // 5. FIXED: Replaced manual localStorage removal with Firebase signOut
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      // The onAuthStateChanged listener above will automatically catch this 
-      // signout and redirect the user to "/signin"
     } catch (error) {
       console.error("Error signing out: ", error);
     }
   };
+
+  // Dynamically get the first letter of the name for the avatar icon (defaults to '?' if empty)
+  const avatarLetter = profileData.fullName ? profileData.fullName.charAt(0).toUpperCase() : "?";
 
   return (
     <div className="profile-page">
@@ -60,18 +80,20 @@ const Profile = () => {
         </div>
       </div>
 
-      {/* User Card */}
-      <div className="user-card">
-        <div className="avatar">R</div>
-
-        <div>
-          <h3>Rahul Sharma</h3>
-          <p>+91 9876543210</p>
+      {/* User Card - UPDATED WITH LIVE DATA */}
+      <Link to="/Userprofile" className="user-card-link" style={{ textDecoration: "none", color: "inherit" }}>
+        <div className="user-card">
+          <div className="avatar">{avatarLetter}</div>
+          <div>
+            <h3>{profileData.fullName || "Loading Name..."}</h3>
+            <p>
+              {profileData.mobileNumber 
+                ? `+91 ${profileData.mobileNumber}` 
+                : "No Number Added "}
+            </p>
+            
+          </div>
         </div>
-      </div>
-
-      <Link to="/edit-profile" className="edit-btn">
-        Edit Profile
       </Link>
 
       {/* Orders */}

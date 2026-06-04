@@ -11,6 +11,7 @@ import Editprofile from "./components/Editprofile";
 import Orders from "./components/Orders";
 import Notifications from "./components/Notifications";
 import Settings from "./components/Settings";
+import Userprofile from "./components/Userprofile";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
         <Route path="/orders" element={<Orders />} />
         <Route path="/notifications" element={<Notifications />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/Userprofile" element={<Userprofile />} />
       </Routes>
     </BrowserRouter>
   );
