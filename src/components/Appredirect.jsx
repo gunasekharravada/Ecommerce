@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auth } from '../firebase/firebaseconfig'; // Make sure this path points to your firebase config
+import { auth } from '../firebase/firebaseconfig'; 
 import { onAuthStateChanged } from 'firebase/auth';
 
-const AppRedirect = () => {
+const Appredirect = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
 
@@ -18,17 +18,17 @@ const AppRedirect = () => {
       } else {
         // User is logged out
         if (isMobile) {
-          // If they are on mobile and logged out, keep them on sign-in
-          navigate('/');
+          // TARGET ACHIEVED: Fast redirect to Sign-In form on mobile
+          navigate('/signin'); 
         } else {
-          // If laptop/desktop, default to /home or wherever your main view is
+          // If laptop/desktop, default to /home or your main landing view
           navigate('/home');
         }
       }
       setLoading(false);
     });
 
-    // 2. Handle screen resizing dynamically
+    // 2. Handle screen resizing dynamically if they rotate their phone
     const handleResize = () => {
       const user = auth.currentUser;
       const isMobile = window.innerWidth <= 768;
@@ -38,7 +38,7 @@ const AppRedirect = () => {
       } else if (!isMobile) {
         navigate('/home');
       } else {
-        navigate('/');
+        navigate('/signin'); // Changed from '/' to '/signin'
       }
     };
 
@@ -51,9 +51,9 @@ const AppRedirect = () => {
     };
   }, [navigate]);
 
-  if (loading) return null; // Wait for Firebase to confirm auth status
+  if (loading) return null; // Wait for Firebase to confirm auth status before rendering anything
 
   return null;
 };
 
-export default AppRedirect;
+export default Appredirect;
