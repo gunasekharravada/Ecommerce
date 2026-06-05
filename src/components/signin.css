@@ -6,7 +6,8 @@
 
 .signin-container {
   min-height: 100vh;
-  background-image: url("C:\\projects\\ecommerce\\src\\images\\login-banner2.jpg");
+  background-image: url("../images/login-banner2.jpg");
+  
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -265,6 +266,9 @@
 @media(max-width:768px){
   body{
     padding-bottom: 0!important;
+
   }
   }
+
+
 
