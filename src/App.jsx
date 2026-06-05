@@ -2,12 +2,12 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Appredirect from './components/Appredirect';
 import Navbar from './components/Navbar';
-import CategoryBar from './components/CategoryBar';
+import Categorybar from './components/Categorybar';
 import Homepage from './components/Homepage';
 import Fashion from './components/Fashion';
 import Signin from './components/Signin';
 import Profile from './components/Profile';
-import EditProfile from './components/Editprofile';
+import Editprofile from './components/Editprofile';
 import Orders from './components/Orders';
 import Notifications from './components/Notifications';
 import Settings from './components/Settings';
@@ -24,7 +24,7 @@ function App() {
           element={
             <>
               <Navbar />
-              <CategoryBar />
+              <Categorybar />
               <Homepage />
             </>
           }
@@ -34,7 +34,7 @@ function App() {
           element={
             <>
               <Navbar />
-              <CategoryBar />
+              <Categorybar />
               <Fashion />
             </>
           }
@@ -44,7 +44,7 @@ function App() {
           element={
             <>
               <Navbar />
-              <CategoryBar />
+              <Categorybar />
               <Profile />
             </>
           }
@@ -54,8 +54,8 @@ function App() {
           element={
             <>
               <Navbar />
-              <CategoryBar />
-              <EditProfile />
+              <Categorybar />
+              <Editprofile />
             </>
           }
         />
@@ -64,7 +64,7 @@ function App() {
           element={
             <>
               <Navbar />
-              <CategoryBar />
+              <Categorybar />
               <Orders />
             </>
           }
@@ -74,7 +74,7 @@ function App() {
           element={
             <>
               <Navbar />
-              <CategoryBar />
+              <Categorybar />
               <Notifications />
             </>
           }
@@ -84,7 +84,7 @@ function App() {
           element={
             <>
               <Navbar />
-              <CategoryBar />
+              <Categorybar />
               <Settings />
             </>
           }
@@ -94,7 +94,7 @@ function App() {
           element={
             <>
               <Navbar />
-              <CategoryBar />
+              <Categorybar />
               <UserProfile />
             </>
           }
