@@ -13,7 +13,7 @@
 
   display: flex;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
 
   padding: 20px;
 }
@@ -243,3 +243,28 @@
   text-align: center;
   font-size: 14px;
 }
+@media (max-width: 480px) {
+  .signin-card {
+    padding: 20px;
+  }
+
+  .signin-card h2 {
+    font-size: 28px;
+  }
+
+  .input-field {
+    height: 45px;
+    font-size: 14px;
+  }
+
+  .login-btn {
+    height: 50px;
+    font-size: 15px;
+  }
+}
+@media(max-width:768px){
+  body{
+    padding-bottom: 0!important;
+  }
+  }
+
