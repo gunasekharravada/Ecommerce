@@ -251,11 +251,15 @@
     position: sticky;
     top: 0;
     z-index: 999;
+
+
   }
 
   .mobile-logo {
     text-align: center;
     margin-bottom: 10px;
+ 
+
   }
 
   .mobile-logo img {
@@ -485,5 +489,118 @@
       opacity: 1;
       transform: translateX(-50%) translateY(0);
     }
+  }
+}
+/* ===========================
+   Desktop Profile Menu
+=========================== */
+
+.profile-wrapper {
+  position: relative;
+}
+
+.profile-menu {
+  position: absolute;
+  top: 45px;
+  right: -15px;
+
+  width: 260px;
+
+  background: #fff;
+
+  border-radius: 12px;
+
+  box-shadow: 0 8px 30px rgba(0,0,0,.12);
+
+  overflow: hidden;
+
+  z-index: 9999;
+
+  animation: profileMenu .25s ease;
+}
+
+@keyframes profileMenu {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.menu-title {
+  padding: 18px;
+
+  font-size: 16px;
+  font-weight: 700;
+
+  color: #222;
+
+  border-bottom: 1px solid #eee;
+}
+
+.profile-menu-item {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  padding: 14px 18px;
+
+  text-decoration: none;
+
+  color: #333;
+
+  transition: .25s;
+}
+
+.profile-menu-item:hover {
+  background: #fff4ec;
+  color: #ff6600;
+}
+
+.profile-menu-item svg {
+  font-size: 15px;
+}
+
+.logout-btn-desktop {
+  width: calc(100% - 20px);
+
+  margin: 10px;
+
+  height: 44px;
+
+  border: none;
+
+  border-radius: 8px;
+
+  background: #ff6600;
+
+  color: white;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  cursor: pointer;
+}
+
+.logout-btn-desktop:hover {
+  background: #e65c00;
+}
+
+/* Hide on Mobile */
+
+@media (max-width:768px) {
+  .profile-menu {
+    display: none;
   }
 }

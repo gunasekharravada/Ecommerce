@@ -13,6 +13,7 @@ import {
   FaCreditCard,
   FaTag,
   FaEdit,
+  FaSignOutAlt,
 } from "react-icons/fa";
 
 import "./profile.css";
@@ -81,7 +82,7 @@ const Profile = () => {
       </div>
 
       {/* User Card - UPDATED WITH LIVE DATA */}
-      <Link to="/Userprofile" className="user-card-link" style={{ textDecoration: "none", color: "inherit" }}>
+      <Link to="/Userprofile" className="user-card-link" style={{ textDecoration: "none", color: "" }}>
         <div className="user-card">
           <div className="avatar">{avatarLetter}</div>
           <div>
@@ -143,7 +144,7 @@ const Profile = () => {
 
       {/* Logout Button */}
       <button className="logout-btn" onClick={handleLogout}>
-        Logout
+        <FaSignOutAlt /> Logout
       </button>
     </div>
   );
