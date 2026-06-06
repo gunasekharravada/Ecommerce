@@ -47,6 +47,7 @@ const CategoryNavbar = () => {
           <span>{category.name}</span>
         </Link>
       ))}
+      
     </div>
   );
 };

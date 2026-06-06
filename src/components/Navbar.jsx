@@ -20,6 +20,7 @@ import {
   FaBook,
   FaCouch,
   FaRegHeart,
+  FaMicrophone,
 } from "react-icons/fa";
 
 import "./navbar.css";
@@ -30,19 +31,19 @@ import { Link, useNavigate } from "react-router-dom";
 import { auth } from "../firebase/firebaseconfig"; 
 import { onAuthStateChanged, signOut } from "firebase/auth";
 
+
 const Navbar = () => {
   // STATE TO TRACK LOGGED IN USER & AUTH LOADING STATUS
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true); // Tracks if Firebase is still checking session
-  
+  const navigate = useNavigate();
   const [showLoginTip, setShowLoginTip] = useState(false);
   const [shopDropdown, setShopDropdown] = useState(false);
   const [sticky, setSticky] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false); // Declared missing state to prevent crashes
-
+  const notificationCount = 2;
   const cartCount = 3; 
-  const navigate = useNavigate();
 
   const shopDropdownRef = useRef(null); 
   const profileMenuRef = useRef(null); 
@@ -108,9 +109,6 @@ const Navbar = () => {
     }
   };
 
-  // HANDLER FOR MOUSE LEAVE
-
-
   // HANDLER FOR FIREBASE LOGOUT
   const handleLogout = async () => {
     try {
@@ -125,7 +123,9 @@ const Navbar = () => {
 
   return (
     <>
-      {/* Desktop & Tablet Navbar */}
+      {/* ========================================================================= */}
+      {/* LAPTOP / DESKTOP VIEW                                                     */}
+      {/* ========================================================================= */}
       <nav className={`navbar ${sticky ? "sticky" : ""}`}>
         {/* Logo */}
         <div className="logo">
@@ -135,7 +135,7 @@ const Navbar = () => {
         </div>
 
         {/* Location Selector */}
-        <div className="location-container" onClick={() => setIsModalOpen(true)}>
+        <div className="location-container" onClick={() => navigate("/location")}>
           <FaMapMarkerAlt className="location-icon" />
           <div className="location-text-wrapper">
             <span className="deliver-label">Deliver to</span>
@@ -188,7 +188,6 @@ const Navbar = () => {
             className="profile-wrapper"
             ref={profileMenuRef}
             onMouseEnter={handleProfileMouseEnter}
-         
           >
             <FaUser className="icon" onClick={handleProfileIconClick} />
 
@@ -210,7 +209,7 @@ const Navbar = () => {
                     <Link to="/wishlist" className="profile-menu-item" onClick={() => setShowProfileMenu(false)}>
                       <FaHeart /> <span>Wishlist</span>
                     </Link>
-                    <Link to="/addresses" className="profile-menu-item" onClick={() => setShowProfileMenu(false)}>
+                    <Link to="/location" className="profile-menu-item" onClick={() => setShowProfileMenu(false)}>
                       <FaMapMarkerAlt /> <span>Saved Address</span>
                     </Link>
                     <Link to="/coupons" className="profile-menu-item" onClick={() => setShowProfileMenu(false)}>
@@ -231,13 +230,6 @@ const Navbar = () => {
                     </button>
                   </div>
                 )}
-
-                {/* Guest Tooltip */}
-                {!user && showLoginTip && (
-                  <div className="login-callout" onClick={() => navigate("/signin")}>
-                    Please <span>Login</span> / <span>Sign Up</span>
-                  </div>
-                )}
               </>
             )}
           </div>
@@ -249,26 +241,53 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {/* Mobile Top Section */}
+      {/* ========================================================================= */}
+      {/* MOBILE VIEW                                                               */}
+      {/* ========================================================================= */}
       <div className="mobile-top">
-        <div className="mobile-logo">
-          <img src={logo} alt="GoCart Logo" />
-        </div>
-        <div className="location-container" onClick={() => setIsModalOpen(true)}>
-          <FaMapMarkerAlt className="location-icon" />
-          <div className="location-text-wrapper">
-            <span className="deliver-label">Deliver to</span>
-            <span className="location-text">Select Location</span>
-          </div>
-          <FaChevronDown className="location-dropdown" />
-        </div>
+        <div className="mobile-header">
+          {/* Left Side: Logo & Location Bar */}
+          <div className="mobile-left">
+            <div className="mobile-logo">
+              <img src={logo} alt="GoCart" />
+            </div>
 
-        <div className="mobile-search">
-          <input type="text" placeholder="Search for products..." />
+            <div className="mobile-location" onClick={() => navigate("/location")}>
+              <span className="mobile-deliver">
+                <FaMapMarkerAlt /> Deliver to
+              </span>
+              <div className="mobile-address-row">
+                <span className="mobile-address">Select Location</span>
+                <FaChevronDown />
+              </div>
+            </div>
+          </div>
+          
+
+          {/* Right Side: Wishlist next to Notification Icon arranged side-by-side */}
+          <div className="mobile-right">
+            <div className="mobile-wishlist-wrapper" onClick={() => navigate("/wishlist")}>
+              <FaRegHeart className="mobile-wishlist" />
+            </div>
+
+            <div className="mobile-bell-wrapper" onClick={() => navigate("/notifications")}>
+              <FaBell className="mobile-bell" />
+              {notificationCount > 0 && (
+                <span className="mobile-notification-badge">{notificationCount}</span>
+              )}
+            </div>
+          </div>
+        </div>
+        
+        {/* Search Bar */}
+        <div className="mobile-search-container">
+          <FaSearch className="mobile-search-icon" />
+          <input type="text" placeholder="Search for products, brands..." />
+          <FaMicrophone className="mobile-mic-icon" />
         </div>
       </div>
 
-      {/* Mobile Bottom Navigation */}
+      {/* Mobile Bottom Navigation Bar */}
       <div className="mobile-bottom-nav">
         <Link to="/home">
           <FaHome />
@@ -280,8 +299,7 @@ const Navbar = () => {
           <span>Category</span>
         </Link>
         
-        {/* Dynamic loading protection for mobile items */}
-        <Link to={authLoading ? "#" : user ? "/userprofile" : "/signin"} className="mobile-profile-wrapper">
+        <Link to={authLoading ? "#" : user ? "/profile" : "/signin"} className="mobile-profile-wrapper">
           <FaUser />
           <span>{authLoading ? "..." : user ? "Profile" : "Login"}</span>
         </Link>

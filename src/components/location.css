@@ -1,0 +1,53 @@
+.location-page{
+  padding:20px;
+}
+
+.location-header{
+  display:flex;
+  align-items:center;
+  gap:15px;
+  margin-bottom:20px;
+}
+
+.back-btn{
+  font-size:20px;
+  cursor:pointer;
+}
+
+.location-search{
+  width:100%;
+  padding:14px;
+  border:1px solid #ddd;
+  border-radius:10px;
+  margin-bottom:20px;
+}
+
+.current-location{
+  display:flex;
+  gap:15px;
+  padding:15px;
+  border:1px solid #eee;
+  border-radius:10px;
+  margin-bottom:25px;
+  cursor:pointer;
+}
+
+.saved-address-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.saved-address-header button{
+  background:#ff6600;
+  color:white;
+  border:none;
+  padding:8px 15px;
+  border-radius:8px;
+  cursor:pointer;
+}
+
+.empty-address{
+  margin-top:15px;
+  color:#666;
+}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaArrowLeft, FaCamera } from "react-icons/fa";
+import { FaArrowLeft} from "react-icons/fa";
 // ADDED: Firebase Auth and Firestore imports
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";

@@ -1,0 +1,40 @@
+.address-page{
+  padding:20px;
+}
+
+.address-header{
+  display:flex;
+  align-items:center;
+  gap:15px;
+  margin-bottom:25px;
+}
+
+.address-form{
+  display:flex;
+  flex-direction:column;
+  gap:15px;
+}
+
+.address-form input,
+.address-form textarea{
+  padding:14px;
+  border:1px solid #ddd;
+  border-radius:10px;
+  font-size:15px;
+}
+
+.address-form textarea{
+  height:100px;
+  resize:none;
+}
+
+.save-address-btn{
+  height:50px;
+  border:none;
+  background:#ff6600;
+  color:white;
+  font-size:16px;
+  font-weight:600;
+  border-radius:10px;
+  cursor:pointer;
+}

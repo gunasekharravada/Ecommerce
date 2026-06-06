@@ -131,7 +131,7 @@ const Profile = () => {
           Payment Method
         </Link>
 
-        <Link to="/addresses" className="menu-item">
+        <Link to="/location" className="menu-item">
           <FaMapMarkerAlt />
           Addresses
         </Link>

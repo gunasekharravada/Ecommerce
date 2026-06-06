@@ -13,6 +13,7 @@ import Notifications from './components/Notifications';
 import Settings from './components/Settings';
 import UserProfile from './components/Userprofile';
 import Location from './components/Location';
+import Address from './components/Address';
 
 function App() {
   return (
@@ -100,6 +101,26 @@ function App() {
             </>
           }
         />
+        <Route
+          path="/add-address"
+          element={
+            <>
+              <Navbar />
+              <Categorybar />
+              <Address />
+            </>
+          }
+        />    
+        <Route
+          path="/location"
+          element={
+            <>
+              <Navbar />
+              <Categorybar />
+              <Location />
+            </>
+          }
+        />    
       </Routes>
     </BrowserRouter>
   );
