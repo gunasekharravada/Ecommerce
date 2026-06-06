@@ -12,6 +12,7 @@ import Orders from './components/Orders';
 import Notifications from './components/Notifications';
 import Settings from './components/Settings';
 import UserProfile from './components/Userprofile';
+import Location from './components/Location';
 
 function App() {
   return (

@@ -5,46 +5,56 @@ import {
   FaShoppingBag,
   FaChevronDown,
   FaHome,
-  FaStore,
-  FaTshirt,
-  FaLaptop,
-  FaMobile,
-  FaClock,
-  FaBook,
-  FaSprayCan,
-  FaPumpSoap,
-  FaCouch,
   FaThLarge,
   FaHeart,
   FaMapMarkerAlt,
   FaTag,
-  FaPhoneAlt,
-  FaEdit,
-  FaSignOutAlt,
   FaBell,
   FaCog,
- 
+  FaEdit,
+  FaSignOutAlt,
+  FaTshirt,
+  FaMobile,
+  FaLaptop,
+  FaPumpSoap,
+  FaBook,
+  FaCouch,
+  FaRegHeart,
 } from "react-icons/fa";
 
 import "./navbar.css";
 import logo from "../images/logo.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
+// 1. IMPORT FIREBASE AUTH
+import { auth } from "../firebase/firebaseconfig"; 
+import { onAuthStateChanged, signOut } from "firebase/auth";
 
 const Navbar = () => {
+  // STATE TO TRACK LOGGED IN USER & AUTH LOADING STATUS
+  const [user, setUser] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true); // Tracks if Firebase is still checking session
+  
   const [showLoginTip, setShowLoginTip] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
   const [shopDropdown, setShopDropdown] = useState(false);
   const [sticky, setSticky] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false); // Declared missing state to prevent crashes
 
-  const cartCount = 3; // Replace with actual cart count logic
+  const cartCount = 3; 
+  const navigate = useNavigate();
 
-  const shopDropdownRef = useRef(null); // Ref for shop dropdown
-  const profileMenuRef = useRef(null); // Create a ref for profile menu wrapper
+  const shopDropdownRef = useRef(null); 
+  const profileMenuRef = useRef(null); 
 
   useEffect(() => {
+    // LISTEN TO FIREBASE AUTH STATE CHANGES
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setAuthLoading(false); // Firebase check complete!
+    });
+
     const handleClickOutside = (event) => {
-      // Close shop dropdown if clicked outside
       if (
         shopDropdownRef.current &&
         !shopDropdownRef.current.contains(event.target)
@@ -52,12 +62,12 @@ const Navbar = () => {
         setShopDropdown(false);
       }
 
-      // NEW: Close profile menu if clicked outside
       if (
         profileMenuRef.current &&
         !profileMenuRef.current.contains(event.target)
       ) {
         setShowProfileMenu(false);
+        setShowLoginTip(false); // Clean up login tooltip on click outside
       }
     };
 
@@ -69,16 +79,48 @@ const Navbar = () => {
     window.addEventListener("scroll", handleScroll);
 
     return () => {
+      unsubscribe(); 
       document.removeEventListener("mousedown", handleClickOutside);
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
-  // Handler to toggle profile menu when icon is clicked
+  // HANDLER FOR PROFILE ICON CLICK
   const handleProfileIconClick = (e) => {
-    // Prevents conflicts between mouse enter and click events
     e.stopPropagation(); 
-    setShowProfileMenu((prev) => !prev);
+    if (authLoading) return; // Freeze actions if auth state isn't determined yet
+    
+    if (user) {
+      setShowProfileMenu((prev) => !prev);
+    } else {
+      navigate("/signin");
+    }
+  };
+
+  // HANDLER FOR MOUSE ENTER (HOVER)
+  const handleProfileMouseEnter = () => {
+    if (authLoading) return; // Do nothing while loading
+    
+    if (user) {
+      setShowProfileMenu(true);
+    } else {
+      setShowLoginTip(true);
+    }
+  };
+
+  // HANDLER FOR MOUSE LEAVE
+
+
+  // HANDLER FOR FIREBASE LOGOUT
+  const handleLogout = async () => {
+    try {
+      await signOut(auth); 
+      localStorage.clear(); 
+      setShowProfileMenu(false);
+      navigate("/signin"); 
+    } catch (error) {
+      console.error("Error signing out: ", error);
+    }
   };
 
   return (
@@ -87,14 +129,24 @@ const Navbar = () => {
       <nav className={`navbar ${sticky ? "sticky" : ""}`}>
         {/* Logo */}
         <div className="logo">
-          <a href="/">
+          <Link to="/">
             <img src={logo} alt="GoCart Logo" />
-          </a>
+          </Link>
+        </div>
+
+        {/* Location Selector */}
+        <div className="location-container" onClick={() => setIsModalOpen(true)}>
+          <FaMapMarkerAlt className="location-icon" />
+          <div className="location-text-wrapper">
+            <span className="deliver-label">Deliver to</span>
+            <span className="location-text">Select Location</span>
+          </div>
+          <FaChevronDown className="location-dropdown" />
         </div>
 
         {/* Center Menu */}
         <ul className="nav-links">
-          <li><a href="/">Home</a></li>
+          <li><Link to="/">Home</Link></li>
 
           <li
             className="shop-menu"
@@ -105,13 +157,13 @@ const Navbar = () => {
 
             {shopDropdown && (
               <ul className="dropdown">
-                <a href="/"><li><FaTshirt /> Fashion</li></a>
-                <a href="/"><li><FaMobile /> Mobiles</li></a>
-                <a href="/"><li><FaLaptop /> Electronics</li></a>
-                <a href="/"><li><FaPumpSoap /> Skincare</li></a>
-                <a href="/"><li><FaShoppingBag /> Accessories </li></a>
-                <a href="/"><li><FaBook /> Books</li></a>
-                <a href="/"><li><FaCouch /> Furniture</li></a>
+                <li><a href="/"><FaTshirt /> Fashion</a></li>
+                <li><a href="/"><FaMobile /> Mobiles</a></li>
+                <li><a href="/"><FaLaptop /> Electronics</a></li>
+                <li><a href="/"><FaPumpSoap /> Skincare</a></li>
+                <li><a href="/"><FaShoppingBag /> Accessories </a></li>
+                <li><a href="/"><FaBook /> Books</a></li>
+                <li><a href="/"><FaCouch /> Furniture</a></li>
               </ul>
             )}
           </li>
@@ -123,85 +175,70 @@ const Navbar = () => {
         {/* Right Icons */}
         <div className="nav-icons">
           <div className="search-container">
-            {searchOpen && (
-              <input type="text" placeholder="Search for products..." className="search-input" />
-            )}
-
-            <FaSearch
-              className="icon"
-              onClick={() => setSearchOpen(!searchOpen)}
-            />
+            <input type="text" placeholder="Search for products... " className="search-input" />
+            <FaSearch className="search-icon"/>
           </div>
 
-          {/* UPDATED: Added ref, onMouseEnter, and custom onClick logic to profile wrapper */}
+          <div className="whishlist-icon">
+            <FaRegHeart/>
+          </div>
+
+          {/* Profile Wrapper Component */}
           <div
             className="profile-wrapper"
             ref={profileMenuRef}
-            onMouseEnter={() => setShowProfileMenu(true)}
+            onMouseEnter={handleProfileMouseEnter}
+         
           >
             <FaUser className="icon" onClick={handleProfileIconClick} />
 
-            {showProfileMenu && (
-              <div className="profile-menu">
-                <h3 className="menu-title">Your Account</h3>
+            {/* ONLY RENDER INTERFACES ONCE AUTH HAS SETTLED */}
+            {!authLoading && (
+              <>
+                {/* User Dropdown Menu */}
+                {user && showProfileMenu && (
+                  <div className="profile-menu">
+                    <h3 className="menu-title">Your Account</h3>
+                    <p className="user-email-display">{user.email}</p>
 
-                <Link to="/userprofile" className="profile-menu-item" onClick={() => setShowProfileMenu(false)}>
-                  <FaUser />
-                  <span>My Profile</span>
-                </Link>
+                    <Link to="/userprofile" className="profile-menu-item" onClick={() => setShowProfileMenu(false)}>
+                      <FaUser /> <span>My Profile</span>
+                    </Link>
+                    <Link to="/orders" className="profile-menu-item" onClick={() => setShowProfileMenu(false)}>
+                      <FaShoppingBag /> <span>Orders</span>
+                    </Link>
+                    <Link to="/wishlist" className="profile-menu-item" onClick={() => setShowProfileMenu(false)}>
+                      <FaHeart /> <span>Wishlist</span>
+                    </Link>
+                    <Link to="/addresses" className="profile-menu-item" onClick={() => setShowProfileMenu(false)}>
+                      <FaMapMarkerAlt /> <span>Saved Address</span>
+                    </Link>
+                    <Link to="/coupons" className="profile-menu-item" onClick={() => setShowProfileMenu(false)}>
+                      <FaTag /> <span>Coupons & Offers</span>
+                    </Link>
+                    <Link to="/notifications" className="profile-menu-item" onClick={() => setShowProfileMenu(false)}>
+                      <FaBell /> <span>Notifications</span>
+                    </Link>
+                    <Link to="/settings" className="profile-menu-item" onClick={() => setShowProfileMenu(false)}>
+                      <FaCog /> <span>Settings</span>
+                    </Link>
+                    <Link to="/edit-profile" className="profile-menu-item" onClick={() => setShowProfileMenu(false)}>
+                      <FaEdit /> <span>Edit Profile</span>
+                    </Link>
 
-                <Link to="/orders" className="profile-menu-item" onClick={() => setShowProfileMenu(false)}>
-                  <FaShoppingBag />
-                  <span>Orders</span>
-                </Link>
+                    <button className="logout-btn-desktop" onClick={handleLogout}>
+                      <FaSignOutAlt /> Logout
+                    </button>
+                  </div>
+                )}
 
-                <Link to="/wishlist" className="profile-menu-item" onClick={() => setShowProfileMenu(false)}>
-                  <FaHeart />
-                  <span>Wishlist</span>
-                </Link>
-
-                <Link to="/addresses" className="profile-menu-item" onClick={() => setShowProfileMenu(false)}>
-                  <FaMapMarkerAlt />
-                  <span>Saved Address</span>
-                </Link>
-
-                <Link to="/coupons" className="profile-menu-item" onClick={() => setShowProfileMenu(false)}>
-                  <FaTag />
-                  <span>Coupons & Offers</span>
-                </Link>
-
-                 <Link to="/notifications" className="profile-menu-item" onClick={() => setShowProfileMenu(false)}>
-                  <FaBell />
-                  <span>Notifications</span>
-                </Link>
-
-                 <Link to="/settings" className="profile-menu-item" onClick={() => setShowProfileMenu(false)}>
-                  <FaCog />
-                  <span>Settings</span>
-                </Link>
-
-                <Link to="/edit-profile" className="profile-menu-item" onClick={() => setShowProfileMenu(false)}>
-                  <FaEdit />
-                  <span>Edit Profile</span>
-                </Link>
-
-                <button
-                  className="logout-btn-desktop"
-                  onClick={() => {
-                    localStorage.clear();
-                    window.location.href = "/signin";
-                  }}
-                >
-                  <FaSignOutAlt />
-                  Logout
-                </button>
-              </div>
-            )}
-
-            {showLoginTip && (
-              <div className="login-callout">
-                Please <span>Login</span> / <span>Sign Up</span>
-              </div>
+                {/* Guest Tooltip */}
+                {!user && showLoginTip && (
+                  <div className="login-callout" onClick={() => navigate("/signin")}>
+                    Please <span>Login</span> / <span>Sign Up</span>
+                  </div>
+                )}
+              </>
             )}
           </div>
 
@@ -217,6 +254,14 @@ const Navbar = () => {
         <div className="mobile-logo">
           <img src={logo} alt="GoCart Logo" />
         </div>
+        <div className="location-container" onClick={() => setIsModalOpen(true)}>
+          <FaMapMarkerAlt className="location-icon" />
+          <div className="location-text-wrapper">
+            <span className="deliver-label">Deliver to</span>
+            <span className="location-text">Select Location</span>
+          </div>
+          <FaChevronDown className="location-dropdown" />
+        </div>
 
         <div className="mobile-search">
           <input type="text" placeholder="Search for products..." />
@@ -225,32 +270,27 @@ const Navbar = () => {
 
       {/* Mobile Bottom Navigation */}
       <div className="mobile-bottom-nav">
-        <a href="/home">
+        <Link to="/home">
           <FaHome />
           <span>Home</span>
-        </a>
-
-        <a href="/shop">
-          <FaThLarge />
-          <span>Category</span>
-        </a>
-        
-        <Link to="/profile" className="mobile-profile-wrapper">
-          <FaUser />
-          <span>Profile</span>
-
-          {window.innerWidth <= 768 && showLoginTip && (
-            <div className="mobile-login-callout">
-              Login / Sign Up
-            </div>
-          )}
         </Link>
 
-        <a href="/cart" className="mobile-cart">
+        <Link to="/shop">
+          <FaThLarge />
+          <span>Category</span>
+        </Link>
+        
+        {/* Dynamic loading protection for mobile items */}
+        <Link to={authLoading ? "#" : user ? "/userprofile" : "/signin"} className="mobile-profile-wrapper">
+          <FaUser />
+          <span>{authLoading ? "..." : user ? "Profile" : "Login"}</span>
+        </Link>
+
+        <Link to="/cart" className="mobile-cart">
           <FaShoppingBag />
           <span>Cart</span>
           <div className="mobile-badge">{cartCount}</div>
-        </a>
+        </Link>
       </div>
     </>
   );

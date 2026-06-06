@@ -85,7 +85,7 @@ const Editprofile = () => {
   };
 
   // Helper to get the first letter for the avatar icon
-  const avatarLetter = firstName ? firstName.charAt(0).toUpperCase() : "R";
+  const avatarLetter = firstName ? firstName.charAt(0).toUpperCase() : "";
 
   return (
     <div className="edit-profile-page">
@@ -104,9 +104,7 @@ const Editprofile = () => {
         <div className="profile-image">
           {avatarLetter}
 
-          <div className="camera-icon">
-            <FaCamera />
-          </div>
+          
 
         </div>
 
