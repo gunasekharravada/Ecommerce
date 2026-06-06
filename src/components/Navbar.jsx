@@ -27,15 +27,18 @@ import "./navbar.css";
 import logo from "../images/logo.png";
 import { Link, useNavigate } from "react-router-dom";
 
-// 1. IMPORT FIREBASE AUTH
-import { auth } from "../firebase/firebaseconfig"; 
+// 1. IMPORT FIREBASE AUTH & FIRESTORE DATABASE
+import { auth, db } from "../firebase/firebaseconfig"; 
 import { onAuthStateChanged, signOut } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
 
 
 const Navbar = () => {
   // STATE TO TRACK LOGGED IN USER & AUTH LOADING STATUS
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true); // Tracks if Firebase is still checking session
+  const [currentLocationName, setCurrentLocationName] = useState("Select Location"); // Dynamic address state
+
   const navigate = useNavigate();
   const [showLoginTip, setShowLoginTip] = useState(false);
   const [shopDropdown, setShopDropdown] = useState(false);
@@ -49,10 +52,41 @@ const Navbar = () => {
   const profileMenuRef = useRef(null); 
 
   useEffect(() => {
+    // 2. FETCH SAVED LOCATION FROM CLOUD FIRESTORE
+    const fetchUserLocation = async (currentUser) => {
+      if (!currentUser) {
+        setCurrentLocationName("Select Location");
+        return;
+      }
+      try {
+        const userDocRef = doc(db, "users", currentUser.uid);
+        const docSnap = await getDoc(userDocRef);
+
+        if (docSnap.exists() && docSnap.data().addresses && docSnap.data().addresses.length > 0) {
+          const addressesArray = docSnap.data().addresses;
+          // Grab the last entry in the array (most recently saved location)
+          const recentAddress = addressesArray[addressesArray.length - 1];
+          
+          // Construct a compact, clean string for your navigation layout
+          const readableName = recentAddress.area || recentAddress.city || "Saved Location";
+          setCurrentLocationName(readableName);
+        } else {
+          // If no address blocks exist inside database
+          setCurrentLocationName("Select Location");
+        }
+      } catch (error) {
+        console.error("Error fetching location for navbar header layout:", error);
+        setCurrentLocationName("Select Location");
+      }
+    };
+
     // LISTEN TO FIREBASE AUTH STATE CHANGES
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       setAuthLoading(false); // Firebase check complete!
+      
+      // Kick off location payload retrieval
+      fetchUserLocation(currentUser);
     });
 
     const handleClickOutside = (event) => {
@@ -134,12 +168,12 @@ const Navbar = () => {
           </Link>
         </div>
 
-        {/* Location Selector */}
+        {/* Location Selector (UPDATED) */}
         <div className="location-container" onClick={() => navigate("/location")}>
           <FaMapMarkerAlt className="location-icon" />
           <div className="location-text-wrapper">
             <span className="deliver-label">Deliver to</span>
-            <span className="location-text">Select Location</span>
+            <span className="location-text">{currentLocationName}</span>
           </div>
           <FaChevronDown className="location-dropdown" />
         </div>
@@ -252,19 +286,20 @@ const Navbar = () => {
               <img src={logo} alt="GoCart" />
             </div>
 
+            {/* Mobile Location Selector (UPDATED) */}
             <div className="mobile-location" onClick={() => navigate("/location")}>
               <span className="mobile-deliver">
                 <FaMapMarkerAlt /> Deliver to
               </span>
               <div className="mobile-address-row">
-                <span className="mobile-address">Select Location</span>
+                <span className="mobile-address">{currentLocationName}</span>
                 <FaChevronDown />
               </div>
             </div>
           </div>
           
 
-          {/* Right Side: Wishlist next to Notification Icon arranged side-by-side */}
+          {/* Right Side: Wishlist next to Notification Icon */}
           <div className="mobile-right">
             <div className="mobile-wishlist-wrapper" onClick={() => navigate("/wishlist")}>
               <FaRegHeart className="mobile-wishlist" />

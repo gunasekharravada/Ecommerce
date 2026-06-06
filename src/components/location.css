@@ -51,3 +51,293 @@
   margin-top:15px;
   color:#666;
 }
+.search-container {
+  position: relative;
+  width: 100%;
+}
+
+.suggestions-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  max-height: 250px;
+  overflow-y: auto;
+  margin: 4px 0 0 0;
+  padding: 0;
+  list-style: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 999;
+}
+
+.suggestion-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  cursor: pointer;
+  border-bottom: 1px solid #f5f5f5;
+  font-size: 14px;
+}
+
+.suggestion-item:hover {
+  background-color: #f9f9f9;
+}
+
+.suggestion-icon {
+  margin-right: 12px;
+  color: #777;
+}
+
+/* Selected address view */
+.saved-address-card {
+  display: flex;
+  align-items: center;
+  background: #f4f9f4;
+  border: 1px solid #d4ebd4;
+  padding: 16px;
+  border-radius: 8px;
+  margin-top: 12px;
+}
+.saved-address-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Pushes delete button to the right side */
+  background: #ffffff;
+  border: 1px solid #eaeaea;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.card-left-content {
+  display: flex;
+  align-items: center;
+  flex: 1; /* Lets text occupy remaining left space safely */
+}
+
+.card-icon {
+  color: #ff4d4d; /* Gives location icon a clear color profile */
+  margin-right: 14px;
+  font-size: 18px;
+}
+
+.card-details h4 {
+  margin: 0 0 4px 0;
+  font-size: 15px;
+  color: #333;
+}
+
+.card-details p {
+  margin: 0;
+  font-size: 13px;
+  color: #666;
+  line-height: 1.4;
+}
+
+/* Delete Button Styling */
+.delete-address-btn {
+  background: none;
+  border: none;
+  color: #888888;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease, transform 0.1s ease;
+}
+
+.delete-address-btn:hover {
+  color: red; /* Turns red when hovered */
+  transform: scale(1.08);
+}
+/* Container holding action buttons on right side */
+.card-actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+/* Edit Button Style */
+.edit-address-btn {
+  background: none;
+  border: none;
+  color: #007bff; /* Clear blue color profile */
+  font-size: 15px;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.1s ease;
+}
+
+.edit-address-btn:hover {
+  transform: scale(1.1);
+  color: #0056b3;
+}
+
+/* Inline Edit Form Structure */
+.inline-edit-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.inline-edit-form input,
+.inline-edit-form textarea {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.inline-edit-form textarea {
+  resize: vertical;
+  min-height: 50px;
+}
+
+.inline-row {
+  display: flex;
+  gap: 8px;
+}
+
+/* Bottom Action Buttons inside editing view */
+.edit-actions-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.save-edit-btn,
+.cancel-edit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.save-edit-btn {
+  background-color: #28a745;
+  color: white;
+}
+
+.save-edit-btn:hover {
+  background-color: #218838;
+}
+
+.cancel-edit-btn {
+  background-color: #6c757d;
+  color: white;
+}
+
+.cancel-edit-btn:hover {
+  background-color: #5a6268;
+}
+/* Full screen layout blur filter overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.45); /* Soft dimming shade */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-out;
+}
+
+/* Modern Card Box Container */
+.modern-modal-box {
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 360px;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  animation: scaleUp 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modal-icon-wrapper {
+  color: #ff6600;
+  font-size: 32px;
+  margin-bottom: 12px;
+}
+
+.modern-modal-box h3 {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  color: #222;
+  font-weight: 600;
+}
+
+.modern-modal-box p {
+  margin: 0 0 20px 0;
+  font-size: 14px;
+  color: #666;
+  line-height: 1.5;
+}
+
+/* Modal Bottom Control Triggers */
+.modal-buttons-row {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.modal-cancel-btn,
+.modal-delete-btn {
+  flex: 1;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.modal-cancel-btn {
+  background-color: #f1f3f5;
+  color: #495057;
+}
+
+.modal-cancel-btn:hover {
+  background-color: #e9ecef;
+}
+
+.modal-delete-btn {
+  background-color: #ff6600;
+  color: white;
+}
+
+.modal-delete-btn:hover {
+  background-color: #ff6600;
+}
+
+/* Smooth Entrance Keyframes Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleUp {
+  from { transform: scale(0.92); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
