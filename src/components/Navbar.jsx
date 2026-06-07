@@ -27,24 +27,23 @@ import "./navbar.css";
 import logo from "../images/logo.png";
 import { Link, useNavigate } from "react-router-dom";
 
-// 1. IMPORT FIREBASE AUTH & FIRESTORE DATABASE
+// IMPORT FIREBASE AUTH & FIRESTORE REAL-TIME LISTENER
 import { auth, db } from "../firebase/firebaseconfig"; 
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, onSnapshot } from "firebase/firestore"; // Using onSnapshot for instant updates
 
 
 const Navbar = () => {
   // STATE TO TRACK LOGGED IN USER & AUTH LOADING STATUS
   const [user, setUser] = useState(null);
-  const [authLoading, setAuthLoading] = useState(true); // Tracks if Firebase is still checking session
-  const [currentLocationName, setCurrentLocationName] = useState("Select Location"); // Dynamic address state
+  const [authLoading, setAuthLoading] = useState(true); 
+  const [currentLocationName, setCurrentLocationName] = useState("Select Location"); 
 
   const navigate = useNavigate();
   const [showLoginTip, setShowLoginTip] = useState(false);
   const [shopDropdown, setShopDropdown] = useState(false);
   const [sticky, setSticky] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false); // Declared missing state to prevent crashes
   const notificationCount = 2;
   const cartCount = 3; 
 
@@ -52,57 +51,45 @@ const Navbar = () => {
   const profileMenuRef = useRef(null); 
 
   useEffect(() => {
-    // 2. FETCH SAVED LOCATION FROM CLOUD FIRESTORE
-    const fetchUserLocation = async (currentUser) => {
-      if (!currentUser) {
-        setCurrentLocationName("Select Location");
-        return;
-      }
-      try {
-        const userDocRef = doc(db, "users", currentUser.uid);
-        const docSnap = await getDoc(userDocRef);
-
-        if (docSnap.exists() && docSnap.data().addresses && docSnap.data().addresses.length > 0) {
-          const addressesArray = docSnap.data().addresses;
-          // Grab the last entry in the array (most recently saved location)
-          const recentAddress = addressesArray[addressesArray.length - 1];
-          
-          // Construct a compact, clean string for your navigation layout
-          const readableName = recentAddress.area || recentAddress.city || "Saved Location";
-          setCurrentLocationName(readableName);
-        } else {
-          // If no address blocks exist inside database
-          setCurrentLocationName("Select Location");
-        }
-      } catch (error) {
-        console.error("Error fetching location for navbar header layout:", error);
-        setCurrentLocationName("Select Location");
-      }
-    };
+    let unsubscribeFromFirestore = null;
 
     // LISTEN TO FIREBASE AUTH STATE CHANGES
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribeFromAuth = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
-      setAuthLoading(false); // Firebase check complete!
-      
-      // Kick off location payload retrieval
-      fetchUserLocation(currentUser);
+      setAuthLoading(false); 
+
+      // If a firestore listener was already open from a previous state, close it
+      if (unsubscribeFromFirestore) {
+        unsubscribeFromFirestore();
+      }
+
+      if (currentUser) {
+        // Set up real-time stream listener for addresses array
+        const userDocRef = doc(db, "users", currentUser.uid);
+        unsubscribeFromFirestore = onSnapshot(userDocRef, (docSnap) => {
+          if (docSnap.exists() && docSnap.data().addresses && docSnap.data().addresses.length > 0) {
+            const addressesArray = docSnap.data().addresses;
+            const recentAddress = addressesArray[addressesArray.length - 1];
+            const readableName = recentAddress.area || recentAddress.city || "Saved Location";
+            setCurrentLocationName(readableName);
+          } else {
+            setCurrentLocationName("Select Location");
+          }
+        }, (error) => {
+          console.error("Error streaming dynamic user locations:", error);
+        });
+      } else {
+        setCurrentLocationName("Select Location");
+      }
     });
 
     const handleClickOutside = (event) => {
-      if (
-        shopDropdownRef.current &&
-        !shopDropdownRef.current.contains(event.target)
-      ) {
+      if (shopDropdownRef.current && !shopDropdownRef.current.contains(event.target)) {
         setShopDropdown(false);
       }
-
-      if (
-        profileMenuRef.current &&
-        !profileMenuRef.current.contains(event.target)
-      ) {
+      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target)) {
         setShowProfileMenu(false);
-        setShowLoginTip(false); // Clean up login tooltip on click outside
+        setShowLoginTip(false); 
       }
     };
 
@@ -114,7 +101,8 @@ const Navbar = () => {
     window.addEventListener("scroll", handleScroll);
 
     return () => {
-      unsubscribe(); 
+      unsubscribeFromAuth(); 
+      if (unsubscribeFromFirestore) unsubscribeFromFirestore();
       document.removeEventListener("mousedown", handleClickOutside);
       window.removeEventListener("scroll", handleScroll);
     };
@@ -123,7 +111,7 @@ const Navbar = () => {
   // HANDLER FOR PROFILE ICON CLICK
   const handleProfileIconClick = (e) => {
     e.stopPropagation(); 
-    if (authLoading) return; // Freeze actions if auth state isn't determined yet
+    if (authLoading) return; 
     
     if (user) {
       setShowProfileMenu((prev) => !prev);
@@ -134,8 +122,7 @@ const Navbar = () => {
 
   // HANDLER FOR MOUSE ENTER (HOVER)
   const handleProfileMouseEnter = () => {
-    if (authLoading) return; // Do nothing while loading
-    
+    if (authLoading) return; 
     if (user) {
       setShowProfileMenu(true);
     } else {
@@ -147,7 +134,7 @@ const Navbar = () => {
   const handleLogout = async () => {
     try {
       await signOut(auth); 
-      localStorage.clear(); 
+      // REMOVED localStorage.clear() so Firebase tokens are safely maintained 
       setShowProfileMenu(false);
       navigate("/signin"); 
     } catch (error) {
@@ -168,7 +155,7 @@ const Navbar = () => {
           </Link>
         </div>
 
-        {/* Location Selector (UPDATED) */}
+        {/* Location Selector */}
         <div className="location-container" onClick={() => navigate("/location")}>
           <FaMapMarkerAlt className="location-icon" />
           <div className="location-text-wrapper">
@@ -225,10 +212,8 @@ const Navbar = () => {
           >
             <FaUser className="icon" onClick={handleProfileIconClick} />
 
-            {/* ONLY RENDER INTERFACES ONCE AUTH HAS SETTLED */}
             {!authLoading && (
               <>
-                {/* User Dropdown Menu */}
                 {user && showProfileMenu && (
                   <div className="profile-menu">
                     <h3 className="menu-title">Your Account</h3>
@@ -286,7 +271,6 @@ const Navbar = () => {
               <img src={logo} alt="GoCart" />
             </div>
 
-            {/* Mobile Location Selector (UPDATED) */}
             <div className="mobile-location" onClick={() => navigate("/location")}>
               <span className="mobile-deliver">
                 <FaMapMarkerAlt /> Deliver to
@@ -299,7 +283,7 @@ const Navbar = () => {
           </div>
           
 
-          {/* Right Side: Wishlist next to Notification Icon */}
+          {/* Right Side: Wishlist next to Notification Icon arranged side-by-side */}
           <div className="mobile-right">
             <div className="mobile-wishlist-wrapper" onClick={() => navigate("/wishlist")}>
               <FaRegHeart className="mobile-wishlist" />
@@ -324,7 +308,7 @@ const Navbar = () => {
 
       {/* Mobile Bottom Navigation Bar */}
       <div className="mobile-bottom-nav">
-        <Link to="/home">
+        <Link to="/">
           <FaHome />
           <span>Home</span>
         </Link>
@@ -334,6 +318,7 @@ const Navbar = () => {
           <span>Category</span>
         </Link>
         
+        {/* FIXED: Links directly to your established /userprofile path structure instead of fallback templates */}
         <Link to={authLoading ? "#" : user ? "/profile" : "/signin"} className="mobile-profile-wrapper">
           <FaUser />
           <span>{authLoading ? "..." : user ? "Profile" : "Login"}</span>
