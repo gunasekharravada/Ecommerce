@@ -30,11 +30,10 @@ import { Link, useNavigate } from "react-router-dom";
 // IMPORT FIREBASE AUTH & FIRESTORE REAL-TIME LISTENER
 import { auth, db } from "../firebase/firebaseconfig"; 
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import { doc, onSnapshot } from "firebase/firestore"; // Using onSnapshot for instant updates
+import { doc, onSnapshot } from "firebase/firestore";
 
 
 const Navbar = () => {
-  // STATE TO TRACK LOGGED IN USER & AUTH LOADING STATUS
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true); 
   const [currentLocationName, setCurrentLocationName] = useState("Select Location"); 
@@ -44,6 +43,10 @@ const Navbar = () => {
   const [shopDropdown, setShopDropdown] = useState(false);
   const [sticky, setSticky] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  
+  // Mobile profile card utility toggle state
+  const [showMobileProfileSlider, setShowMobileProfileSlider] = useState(false);
+  
   const notificationCount = 2;
   const cartCount = 3; 
 
@@ -53,18 +56,15 @@ const Navbar = () => {
   useEffect(() => {
     let unsubscribeFromFirestore = null;
 
-    // LISTEN TO FIREBASE AUTH STATE CHANGES
     const unsubscribeFromAuth = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       setAuthLoading(false); 
 
-      // If a firestore listener was already open from a previous state, close it
       if (unsubscribeFromFirestore) {
         unsubscribeFromFirestore();
       }
 
       if (currentUser) {
-        // Set up real-time stream listener for addresses array
         const userDocRef = doc(db, "users", currentUser.uid);
         unsubscribeFromFirestore = onSnapshot(userDocRef, (docSnap) => {
           if (docSnap.exists() && docSnap.data().addresses && docSnap.data().addresses.length > 0) {
@@ -108,7 +108,6 @@ const Navbar = () => {
     };
   }, []);
 
-  // HANDLER FOR PROFILE ICON CLICK
   const handleProfileIconClick = (e) => {
     e.stopPropagation(); 
     if (authLoading) return; 
@@ -120,7 +119,6 @@ const Navbar = () => {
     }
   };
 
-  // HANDLER FOR MOUSE ENTER (HOVER)
   const handleProfileMouseEnter = () => {
     if (authLoading) return; 
     if (user) {
@@ -130,15 +128,24 @@ const Navbar = () => {
     }
   };
 
-  // HANDLER FOR FIREBASE LOGOUT
   const handleLogout = async () => {
     try {
       await signOut(auth); 
-      // REMOVED localStorage.clear() so Firebase tokens are safely maintained 
       setShowProfileMenu(false);
+      setShowMobileProfileSlider(false);
       navigate("/signin"); 
     } catch (error) {
       console.error("Error signing out: ", error);
+    }
+  };
+
+  // Dedicated Mobile UI Trigger for Profile Interactions
+  const handleMobileProfileClick = (e) => {
+    if (authLoading) return;
+    if (!user) {
+      navigate("/signin");
+    } else {
+      setShowMobileProfileSlider((prev) => !prev);
     }
   };
 
@@ -265,7 +272,6 @@ const Navbar = () => {
       {/* ========================================================================= */}
       <div className="mobile-top">
         <div className="mobile-header">
-          {/* Left Side: Logo & Location Bar */}
           <div className="mobile-left">
             <div className="mobile-logo">
               <img src={logo} alt="GoCart" />
@@ -282,8 +288,6 @@ const Navbar = () => {
             </div>
           </div>
           
-
-          {/* Right Side: Wishlist next to Notification Icon arranged side-by-side */}
           <div className="mobile-right">
             <div className="mobile-wishlist-wrapper" onClick={() => navigate("/wishlist")}>
               <FaRegHeart className="mobile-wishlist" />
@@ -298,7 +302,6 @@ const Navbar = () => {
           </div>
         </div>
         
-        {/* Search Bar */}
         <div className="mobile-search-container">
           <FaSearch className="mobile-search-icon" />
           <input type="text" placeholder="Search for products, brands..." />
@@ -306,9 +309,35 @@ const Navbar = () => {
         </div>
       </div>
 
+      {/* Inline Persistent Mobile Profile Panel */}
+      {showMobileProfileSlider && user && (
+        <div className="mobile-profile-overlay" style={{
+          position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
+          backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 9999, display: 'flex', justifyContent: 'flex-end'
+        }} onClick={() => setShowMobileProfileSlider(false)}>
+          <div className="mobile-drawer" style={{
+            width: '75%', height: '100%', backgroundColor: '#fff', padding: '20px',
+            boxSizing: 'border-box', display: 'flex', flexDirection: 'column', gap: '15px'
+          }} onClick={(e) => e.stopPropagation()}>
+            <h3 style={{ margin: '0 0 5px 0' }}>Settings</h3>
+            <p style={{ fontSize: '12px', color: '#777', margin: '0 0 15px 0' }}>{user.email}</p>
+            <hr style={{ border: 'none', borderTop: '1px solid #eee', margin: 0 }} />
+            
+            <Link to="/userprofile" style={{ textDecoration: 'none', color: '#333', display: 'flex', alignItems: 'center', gap: '10px' }} onClick={() => setShowMobileProfileSlider(false)}><FaUser /> Account Details</Link>
+            <Link to="/orders" style={{ textDecoration: 'none', color: '#333', display: 'flex', alignItems: 'center', gap: '10px' }} onClick={() => setShowMobileProfileSlider(false)}><FaShoppingBag /> Track Orders</Link>
+            <Link to="/location" style={{ textDecoration: 'none', color: '#333', display: 'flex', alignItems: 'center', gap: '10px' }} onClick={() => setShowMobileProfileSlider(false)}><FaMapMarkerAlt /> Shipping Addresses</Link>
+            
+            <button onClick={handleLogout} style={{
+              marginTop: 'auto', padding: '12px', backgroundColor: '#d9534f', color: '#fff',
+              border: 'none', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'
+            }}><FaSignOutAlt /> Sign Out</button>
+          </div>
+        </div>
+      )}
+
       {/* Mobile Bottom Navigation Bar */}
       <div className="mobile-bottom-nav">
-        <Link to="/">
+        <Link to="/home">
           <FaHome />
           <span>Home</span>
         </Link>
@@ -318,11 +347,11 @@ const Navbar = () => {
           <span>Category</span>
         </Link>
         
-        {/* FIXED: Links directly to your established /userprofile path structure instead of fallback templates */}
-        <Link to={authLoading ? "#" : user ? "/profile" : "/signin"} className="mobile-profile-wrapper">
+        {/* INTERACTION CORRECTION FOR MOBILE PHONES */}
+        <div className="mobile-profile-wrapper" onClick={handleMobileProfileClick} style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <FaUser />
           <span>{authLoading ? "..." : user ? "Profile" : "Login"}</span>
-        </Link>
+        </div>
 
         <Link to="/cart" className="mobile-cart">
           <FaShoppingBag />
