@@ -35,7 +35,6 @@ import { doc, onSnapshot } from "firebase/firestore";
 
 const Navbar = () => {
   const [user, setUser] = useState(null);
-  const [authLoading, setAuthLoading] = useState(true); 
   const [currentLocationName, setCurrentLocationName] = useState("Select Location"); 
 
   const navigate = useNavigate();
@@ -58,7 +57,6 @@ const Navbar = () => {
 
     const unsubscribeFromAuth = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
-      setAuthLoading(false); 
 
       if (unsubscribeFromFirestore) {
         unsubscribeFromFirestore();
@@ -110,7 +108,6 @@ const Navbar = () => {
 
   const handleProfileIconClick = (e) => {
     e.stopPropagation(); 
-    if (authLoading) return; 
     
     if (user) {
       setShowProfileMenu((prev) => !prev);
@@ -120,7 +117,6 @@ const Navbar = () => {
   };
 
   const handleProfileMouseEnter = () => {
-    if (authLoading) return; 
     if (user) {
       setShowProfileMenu(true);
     } else {
@@ -141,7 +137,6 @@ const Navbar = () => {
 
   // Dedicated Mobile UI Trigger for Profile Interactions
   const handleMobileProfileClick = (e) => {
-    if (authLoading) return;
     if (!user) {
       navigate("/signin");
     } else {
@@ -219,44 +214,40 @@ const Navbar = () => {
           >
             <FaUser className="icon" onClick={handleProfileIconClick} />
 
-            {!authLoading && (
-              <>
-                {user && showProfileMenu && (
-                  <div className="profile-menu">
-                    <h3 className="menu-title">Your Account</h3>
-                    <p className="user-email-display">{user.email}</p>
+            {user && showProfileMenu && (
+              <div className="profile-menu">
+                <h3 className="menu-title">Your Account</h3>
+                <p className="user-email-display">{user.email}</p>
 
-                    <Link to="/userprofile" className="profile-menu-item" onClick={() => setShowProfileMenu(false)}>
-                      <FaUser /> <span>My Profile</span>
-                    </Link>
-                    <Link to="/orders" className="profile-menu-item" onClick={() => setShowProfileMenu(false)}>
-                      <FaShoppingBag /> <span>Orders</span>
-                    </Link>
-                    <Link to="/wishlist" className="profile-menu-item" onClick={() => setShowProfileMenu(false)}>
-                      <FaHeart /> <span>Wishlist</span>
-                    </Link>
-                    <Link to="/location" className="profile-menu-item" onClick={() => setShowProfileMenu(false)}>
-                      <FaMapMarkerAlt /> <span>Saved Address</span>
-                    </Link>
-                    <Link to="/coupons" className="profile-menu-item" onClick={() => setShowProfileMenu(false)}>
-                      <FaTag /> <span>Coupons & Offers</span>
-                    </Link>
-                    <Link to="/notifications" className="profile-menu-item" onClick={() => setShowProfileMenu(false)}>
-                      <FaBell /> <span>Notifications</span>
-                    </Link>
-                    <Link to="/settings" className="profile-menu-item" onClick={() => setShowProfileMenu(false)}>
-                      <FaCog /> <span>Settings</span>
-                    </Link>
-                    <Link to="/edit-profile" className="profile-menu-item" onClick={() => setShowProfileMenu(false)}>
-                      <FaEdit /> <span>Edit Profile</span>
-                    </Link>
+                <Link to="/userprofile" className="profile-menu-item" onClick={() => setShowProfileMenu(false)}>
+                  <FaUser /> <span>My Profile</span>
+                </Link>
+                <Link to="/orders" className="profile-menu-item" onClick={() => setShowProfileMenu(false)}>
+                  <FaShoppingBag /> <span>Orders</span>
+                </Link>
+                <Link to="/wishlist" className="profile-menu-item" onClick={() => setShowProfileMenu(false)}>
+                  <FaHeart /> <span>Wishlist</span>
+                </Link>
+                <Link to="/location" className="profile-menu-item" onClick={() => setShowProfileMenu(false)}>
+                  <FaMapMarkerAlt /> <span>Saved Address</span>
+                </Link>
+                <Link to="/coupons" className="profile-menu-item" onClick={() => setShowProfileMenu(false)}>
+                  <FaTag /> <span>Coupons & Offers</span>
+                </Link>
+                <Link to="/notifications" className="profile-menu-item" onClick={() => setShowProfileMenu(false)}>
+                  <FaBell /> <span>Notifications</span>
+                </Link>
+                <Link to="/settings" className="profile-menu-item" onClick={() => setShowProfileMenu(false)}>
+                  <FaCog /> <span>Settings</span>
+                </Link>
+                <Link to="/edit-profile" className="profile-menu-item" onClick={() => setShowProfileMenu(false)}>
+                  <FaEdit /> <span>Edit Profile</span>
+                </Link>
 
-                    <button className="logout-btn-desktop" onClick={handleLogout}>
-                      <FaSignOutAlt /> Logout
-                    </button>
-                  </div>
-                )}
-              </>
+                <button className="logout-btn-desktop" onClick={handleLogout}>
+                  <FaSignOutAlt /> Logout
+                </button>
+              </div>
             )}
           </div>
 
@@ -267,11 +258,12 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {/* ========================================================================= */}
+{/* ========================================================================= */}
       {/* MOBILE VIEW                                                               */}
       {/* ========================================================================= */}
       <div className="mobile-top">
         <div className="mobile-header">
+          {/* Left Side: Logo & Location Bar */}
           <div className="mobile-left">
             <div className="mobile-logo">
               <img src={logo} alt="GoCart" />
@@ -288,6 +280,8 @@ const Navbar = () => {
             </div>
           </div>
           
+
+          {/* Right Side: Wishlist next to Notification Icon arranged side-by-side */}
           <div className="mobile-right">
             <div className="mobile-wishlist-wrapper" onClick={() => navigate("/wishlist")}>
               <FaRegHeart className="mobile-wishlist" />
@@ -302,6 +296,7 @@ const Navbar = () => {
           </div>
         </div>
         
+        {/* Search Bar */}
         <div className="mobile-search-container">
           <FaSearch className="mobile-search-icon" />
           <input type="text" placeholder="Search for products, brands..." />
@@ -309,35 +304,9 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Inline Persistent Mobile Profile Panel */}
-      {showMobileProfileSlider && user && (
-        <div className="mobile-profile-overlay" style={{
-          position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
-          backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 9999, display: 'flex', justifyContent: 'flex-end'
-        }} onClick={() => setShowMobileProfileSlider(false)}>
-          <div className="mobile-drawer" style={{
-            width: '75%', height: '100%', backgroundColor: '#fff', padding: '20px',
-            boxSizing: 'border-box', display: 'flex', flexDirection: 'column', gap: '15px'
-          }} onClick={(e) => e.stopPropagation()}>
-            <h3 style={{ margin: '0 0 5px 0' }}>Settings</h3>
-            <p style={{ fontSize: '12px', color: '#777', margin: '0 0 15px 0' }}>{user.email}</p>
-            <hr style={{ border: 'none', borderTop: '1px solid #eee', margin: 0 }} />
-            
-            <Link to="/userprofile" style={{ textDecoration: 'none', color: '#333', display: 'flex', alignItems: 'center', gap: '10px' }} onClick={() => setShowMobileProfileSlider(false)}><FaUser /> Account Details</Link>
-            <Link to="/orders" style={{ textDecoration: 'none', color: '#333', display: 'flex', alignItems: 'center', gap: '10px' }} onClick={() => setShowMobileProfileSlider(false)}><FaShoppingBag /> Track Orders</Link>
-            <Link to="/location" style={{ textDecoration: 'none', color: '#333', display: 'flex', alignItems: 'center', gap: '10px' }} onClick={() => setShowMobileProfileSlider(false)}><FaMapMarkerAlt /> Shipping Addresses</Link>
-            
-            <button onClick={handleLogout} style={{
-              marginTop: 'auto', padding: '12px', backgroundColor: '#d9534f', color: '#fff',
-              border: 'none', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'
-            }}><FaSignOutAlt /> Sign Out</button>
-          </div>
-        </div>
-      )}
-
       {/* Mobile Bottom Navigation Bar */}
       <div className="mobile-bottom-nav">
-        <Link to="/home">
+        <Link to="/">
           <FaHome />
           <span>Home</span>
         </Link>
@@ -347,11 +316,11 @@ const Navbar = () => {
           <span>Category</span>
         </Link>
         
-        {/* INTERACTION CORRECTION FOR MOBILE PHONES */}
-        <div className="mobile-profile-wrapper" onClick={handleMobileProfileClick} style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        {/* FIXED: Removed the authLoading condition and the "..." text entirely */}
+        <Link to={user ? "/profile" : "/signin"} className="mobile-profile-wrapper">
           <FaUser />
-          <span>{authLoading ? "..." : user ? "Profile" : "Login"}</span>
-        </div>
+          <span>{user ? "Profile" : "Login"}</span>
+        </Link>
 
         <Link to="/cart" className="mobile-cart">
           <FaShoppingBag />

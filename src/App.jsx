@@ -20,36 +20,16 @@ import { auth } from './firebase/firebaseconfig';
 import { onAuthStateChanged } from 'firebase/auth';
 
 function App() {
-  const [isInitializing, setIsInitializing] = useState(true);
   const [user, setUser] = useState(null);
 
   useEffect(() => {
     // Check background authentication status immediately on application boot
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
-      setIsInitializing(false); // Token validation complete!
     });
 
     return () => unsubscribe();
   }, []);
-
-  // While Firebase is reading the token, show a mobile-friendly clean loading state
-  if (isInitializing) {
-    return (
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh',
-        fontFamily: 'sans-serif',
-        color: '#666'
-      }}>
-        <div style={{ textAlign: 'center' }}>
-          <p style={{ fontSize: '16px', fontWeight: '500' }}>Loading your session...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <BrowserRouter>
