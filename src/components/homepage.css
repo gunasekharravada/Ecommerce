@@ -241,7 +241,7 @@
 
   .image-section img {
     
-    width: 170px;
+    width: 175px;
 
     height: 32vh;
     margin-bottom: 7px;
@@ -253,11 +253,10 @@
   .dots {
   position: absolute;
 
-  bottom: 0px;
+  bottom: 3px;
   left: 50%;
-  bottom:3px;
   transform: translateX(-50%);
-  margin-bottom: 2px;
+
   display: flex;
   align-items: center;
 
