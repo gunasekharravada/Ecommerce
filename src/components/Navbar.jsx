@@ -24,6 +24,7 @@ import {
 } from "react-icons/fa";
 
 import "./navbar.css";
+import logo1 from "../images/logo1.png";
 import logo from "../images/logo.png";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -153,7 +154,7 @@ const Navbar = () => {
         {/* Logo */}
         <div className="logo">
           <Link to="/">
-            <img src={logo} alt="GoCart Logo" />
+            <img src={logo1} alt="GoCart Logo" />
           </Link>
         </div>
 

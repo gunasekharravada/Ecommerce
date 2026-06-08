@@ -16,9 +16,13 @@ import {
   FaGlasses,
   FaHeartbeat,
   FaPuzzlePiece,
+  FaListUl,
+  FaChevronRight,
+
 } from "react-icons/fa";
 
 const categories = [
+  { name: "All", icon: <FaListUl />, path: "/Homepage" },
   { name: "Fashion", icon: <FaTshirt />, path: "/fashion" },
   { name: "Mobiles", icon: <FaMobileAlt />, path: "/mobiles" },
   { name: "Electronics", icon: <FaLaptop />, path: "/electronics" },
@@ -36,18 +40,26 @@ const categories = [
 
 const CategoryNavbar = () => {
   return (
-    <div className="category-navbar">
-      {categories.map((category, index) => (
-        <Link
-          to={category.path}
-          className="category-item"
-          key={index}
-        >
-          <span className="category-icon">{category.icon}</span>
-          <span>{category.name}</span>
+    <div className="category-section">
+      {/* Top row with Title and View All */}
+      <div className="category-header">
+        <h2 className="category-title">Categories</h2>
+        <Link to="/all-categories" className="view-all-link">
+          View all <FaChevronRight />
         </Link>
-      ))}
-      
+      </div>
+
+      {/* Horizontal scrollable row of icons */}
+      <div className="category-navbar">
+        {categories.map((category, index) => (
+          <Link to={category.path} className="category-item" key={index}>
+            <div className="category-icon-bg">
+              <span className="category-icon">{category.icon}</span>
+            </div>
+            <span className="category-name">{category.name}</span>
+          </Link>
+        ))}
+      </div>
     </div>
   );
 };
