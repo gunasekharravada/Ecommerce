@@ -189,7 +189,7 @@
    ========================================================================== */
 @media (max-width: 768px) {
   .trending-section {
-    padding: 15px 10px;
+    padding: 13px 8px;
     
   }
 
@@ -214,7 +214,7 @@
     min-width: 46%; /* Fits perfectly on mobile screens while hinting at more items to scroll */
     width: 46%;
     border-radius: 16px;
-    padding: 15px;
+    padding: 12px;
     box-shadow: 0 4px 15px rgba(0,0,0,.05);
   }
   
@@ -244,7 +244,7 @@
   }
 
   .image-box {
-    height: 117px;
+    height: 130px;
     margin-top: 15px;
   }
 

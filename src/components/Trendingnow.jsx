@@ -9,6 +9,8 @@ import shoe1 from "../images/shoe111.jpg";
 import bag from "../images/bag.jpg";
 import atomichabits from "../images/atomichabits.jpg";
 import { FaHeart, FaStar, FaChevronRight } from "react-icons/fa";
+import { doc, updateDoc, getDoc, setDoc } from 'firebase/firestore';
+import { auth, db } from '../firebase/firebaseconfig'; 
 
 const trendingProducts = [
   {
@@ -94,6 +96,43 @@ const trendingProducts = [
 ];
 
 const Trendingnow = () => {
+
+  const handleAddToCart = async (item) => {
+    const user = auth.currentUser;
+    if (!user) {
+      alert("Please sign in to add items to your cart.");
+      return;
+    }
+
+    // UPDATED PATH: Points to db -> users -> user.uid -> subcollection "carts" -> document "userCart"
+    const cartRef = doc(db, "users", user.uid, "carts", "userCart");
+    
+    try {
+      const cartSnap = await getDoc(cartRef);
+
+      if (cartSnap.exists()) {
+        const existingItems = cartSnap.data().items || [];
+        const itemIndex = existingItems.findIndex(i => i.id === item.id);
+
+        if (itemIndex > -1) {
+          // Item already exists in cart, increment quantity
+          existingItems[itemIndex].quantity += 1;
+        } else {
+          // Item is new to the cart, add it with quantity 1
+          existingItems.push({ ...item, quantity: 1 });
+        }
+
+        await updateDoc(cartRef, { items: existingItems });
+      } else {
+        // If no cart document exists under this user yet, create it
+        await setDoc(cartRef, { items: [{ ...item, quantity: 1 }] });
+      }
+      alert(`${item.name} added to cart!`);
+    } catch (error) {
+      console.error("Error updating cart database: ", error);
+    }
+  };
+
   return (
     <section className="trending-section">
       <div className="section-header">
@@ -135,7 +174,7 @@ const Trendingnow = () => {
               </span>
             </div>
 
-            <button className="cart-btn">
+            <button className="cart-btn" onClick={() => handleAddToCart(item)}>
               Add To Cart
             </button>
           </div>

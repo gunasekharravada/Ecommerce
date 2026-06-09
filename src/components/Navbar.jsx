@@ -252,10 +252,13 @@ const Navbar = () => {
             )}
           </div>
 
+          <Link to="/cart" >
           <div className="cart-container">
             <FaShoppingBag className="icon" />
             <span className="cart-badge">{cartCount}</span>
-          </div>
+            </div>
+          </Link>
+         
         </div>
       </nav>
 

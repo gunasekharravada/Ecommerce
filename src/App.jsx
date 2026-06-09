@@ -15,6 +15,10 @@ import UserProfile from './components/Userprofile';
 import Location from './components/Location';
 import Address from './components/Address';
 import Trendingnow from './components/Trendingnow';
+import Cartitemlist from './components/Cartitemlist';
+
+// 1. IMPORT YOUR CART COMPONENT HERE (Adjust file name if it's CartPage)
+import Cart from './components/Cart'; 
 
 // Import auth to track initial boot layer status
 import { auth } from './firebase/firebaseconfig';
@@ -154,6 +158,27 @@ function App() {
             </>
           } 
         />
+         <Route 
+          path='/cart'
+          element={
+            <>
+              <Navbar />
+              <Categorybar />
+              <Cart /> 
+            </>
+          } 
+        />
+         <Route 
+          path='/cart'
+          element={
+            <>
+              <Navbar />
+              <Categorybar />
+              <Cartitemlist /> 
+            </>
+          } 
+        />
+        
       </Routes>
     </BrowserRouter>
   );
