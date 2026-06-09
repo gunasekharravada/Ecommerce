@@ -14,6 +14,7 @@ import Settings from './components/Settings';
 import UserProfile from './components/Userprofile';
 import Location from './components/Location';
 import Address from './components/Address';
+import Trendingnow from './components/Trendingnow';
 
 // Import auth to track initial boot layer status
 import { auth } from './firebase/firebaseconfig';
@@ -49,6 +50,7 @@ function App() {
               <Navbar />
               <Categorybar />
               <Homepage />
+              <Trendingnow /> {/* Added here so it shows up on the Homepage directly under the slider */}
             </>
           }
         />
@@ -141,7 +143,17 @@ function App() {
               <Location />
             </>
           }
-        />    
+        /> 
+        <Route 
+          path='/trendingnow'
+          element={
+            <>
+              <Navbar />
+              <Categorybar />
+              <Trendingnow />
+            </>
+          } 
+        />
       </Routes>
     </BrowserRouter>
   );
