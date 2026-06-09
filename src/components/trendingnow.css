@@ -190,6 +190,7 @@
 @media (max-width: 768px) {
   .trending-section {
     padding: 15px 10px;
+    
   }
 
   .section-header {
@@ -210,10 +211,10 @@
   }
 
   .product-card {
-    min-width: 45%; /* Fits perfectly on mobile screens while hinting at more items to scroll */
-    width: 45%;
+    min-width: 46%; /* Fits perfectly on mobile screens while hinting at more items to scroll */
+    width: 46%;
     border-radius: 16px;
-    padding: 10px;
+    padding: 15px;
     box-shadow: 0 4px 15px rgba(0,0,0,.05);
   }
   
@@ -243,7 +244,7 @@
   }
 
   .image-box {
-    height: 100px;
+    height: 117px;
     margin-top: 15px;
   }
 
