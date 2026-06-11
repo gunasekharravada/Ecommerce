@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./trendingnow.css";
 import jacket1 from "../images/menjacket3.jpg";
 import samsungs26f from "../images/samsungs26f.jpg";
@@ -9,7 +9,7 @@ import shoe1 from "../images/shoe111.jpg";
 import bag from "../images/bag.jpg";
 import atomichabits from "../images/atomichabits.jpg";
 import { FaHeart, FaStar, FaChevronRight } from "react-icons/fa";
-import { doc, updateDoc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase/firebaseconfig'; 
 
 const trendingProducts = [
@@ -96,7 +96,51 @@ const trendingProducts = [
 ];
 
 const Trendingnow = () => {
+  // State to control modal visibility and keep track of the selected product
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
+  // Triggers when user clicks the heart icon
+  const handleHeartClick = (product) => {
+    setSelectedProduct(product);
+    setIsModalOpen(true);
+  };
+
+  // Runs only if the user confirms "Yes" inside the modal
+  const handleConfirmWishlist = async () => {
+    if (!selectedProduct) return;
+
+    const user = auth.currentUser;
+    if (!user) {
+      alert("Please sign in to add items to your wishlist.");
+      setIsModalOpen(false);
+      return;
+    }
+
+    const wishlistRef = doc(db, 'users', user.uid, 'wishlist', String(selectedProduct.id));
+
+    try {
+      await setDoc(wishlistRef, {
+        id: selectedProduct.id,
+        name: selectedProduct.name,
+        category: selectedProduct.category,
+        image: selectedProduct.image,
+        price: selectedProduct.price,
+        oldPrice: selectedProduct.oldPrice,
+        rating: selectedProduct.rating,
+        discount: selectedProduct.discount,
+        addedAt: new Date()
+      });
+      // Close the modal cleanly after saving
+      setIsModalOpen(false);
+      setSelectedProduct(null);
+    } catch (error) {
+      console.error("Error adding to wishlist: ", error);
+      setIsModalOpen(false);
+    }
+  };
+
+  // --- CART FUNCTION ---
   const handleAddToCart = async (item) => {
     const user = auth.currentUser;
     if (!user) {
@@ -104,7 +148,6 @@ const Trendingnow = () => {
       return;
     }
 
-    // UPDATED PATH: Points to db -> users -> user.uid -> subcollection "carts" -> document "userCart"
     const cartRef = doc(db, "users", user.uid, "carts", "userCart");
     
     try {
@@ -115,16 +158,13 @@ const Trendingnow = () => {
         const itemIndex = existingItems.findIndex(i => i.id === item.id);
 
         if (itemIndex > -1) {
-          // Item already exists in cart, increment quantity
           existingItems[itemIndex].quantity += 1;
         } else {
-          // Item is new to the cart, add it with quantity 1
           existingItems.push({ ...item, quantity: 1 });
         }
 
         await updateDoc(cartRef, { items: existingItems });
       } else {
-        // If no cart document exists under this user yet, create it
         await setDoc(cartRef, { items: [{ ...item, quantity: 1 }] });
       }
       alert(`${item.name} added to cart!`);
@@ -137,7 +177,7 @@ const Trendingnow = () => {
     <section className="trending-section">
       <div className="section-header">
         <h2>Trending Now</h2>
-        <span>View All < FaChevronRight /></span>
+        <span>View All <FaChevronRight /></span>
       </div>
 
       <div className="trending-slider">
@@ -147,7 +187,8 @@ const Trendingnow = () => {
               -{item.discount}%
             </div>
 
-            <button className="wishlist-btn">
+            {/* Triggers the confirmation modal instead of pushing instantly */}
+            <button className="wishlist-btn" onClick={() => handleHeartClick(item)}>
               <FaHeart />
             </button>
 
@@ -180,6 +221,24 @@ const Trendingnow = () => {
           </div>
         ))}
       </div>
+
+      {/* Modern Confirmation Box UI Overlay */}
+      {isModalOpen && selectedProduct && (
+        <div className="custom-modal-overlay" onClick={() => setIsModalOpen(false)}>
+          <div className="custom-modal" onClick={(e) => e.stopPropagation()}>
+            <h3>Save item to wishlist?</h3>
+            <p>Do you want to add {selectedProduct.name} to your wishlist collection?</p>
+            <div className="modal-actions">
+              <button onClick={handleConfirmWishlist} className="btn-confirm">
+                Yes
+              </button>
+              <button onClick={() => { setIsModalOpen(false); setSelectedProduct(null); }} className="btn-cancel">
+                No
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };

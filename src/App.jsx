@@ -19,6 +19,7 @@ import Cartitemlist from './components/Cartitemlist';
 
 // 1. IMPORT YOUR CART COMPONENT HERE (Adjust file name if it's CartPage)
 import Cart from './components/Cart'; 
+import Wishlist from './components/Wishlist';
 
 // Import auth to track initial boot layer status
 import { auth } from './firebase/firebaseconfig';
@@ -178,6 +179,17 @@ function App() {
             </>
           } 
         />
+         <Route 
+          path='/Wishlist'
+          element={
+            <>
+              <Navbar />
+              <Categorybar />
+              <Wishlist /> 
+            </>
+          } 
+        />
+
         
       </Routes>
     </BrowserRouter>

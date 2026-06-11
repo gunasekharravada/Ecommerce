@@ -203,9 +203,11 @@ const Navbar = () => {
             <FaSearch className="search-icon"/>
           </div>
 
+          <Link to="/Wishlist">
           <div className="whishlist-icon">
             <FaRegHeart/>
           </div>
+          </Link>
 
           {/* Profile Wrapper Component */}
           <div
